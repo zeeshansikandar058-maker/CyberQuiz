@@ -21,4 +21,4 @@ An interactive web-based quiz to test your cybersecurity knowledge.
 - GitHub Pages Hosting
 - Frontend Logic
 
-Made with ❤️ by Zeeshan Sikandar for Hackathon 2026
+❤️ Zeeshan Sikandar 2026
