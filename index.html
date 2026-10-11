@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberQuiz</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: white;
+      padding: 20px;
+    }
+
+    .quiz {
+      max-width: 550px;
+      margin: 40px auto;
+      padding: 25px;
+      background: #1e293b;
+      border-radius: 15px;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    .option {
+      display: block;
+      background: #334155;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #0284c7;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="quiz">
+    <h1>CyberQuiz</h1>
+    <p>Test your cybersecurity knowledge!</p>
+
+    <p id="progress"></p>
+    <h3 id="question"></h3>
+    <div id="options"></div>
+
+    <button id="check">Check Answer</button>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does DNS do?",
+        options: [
+          "Deletes viruses",
+          "Resolves domain names to IP addresses",
+          "Creates passwords",
+          "Blocks every hacker"
+        ],
+        answer: 1,
+        explanation: "DNS helps resolve domain names to IP addresses."
+      },
+      {
+        question: "Which is a strong password practice?",
+        options: [
+          "Use 123456",
+          "Reuse one password everywhere",
+          "Use unique, long passwords",
+          "Share passwords with friends"
+        ],
+        answer: 2,
+        explanation: "Use long, unique passwords for your accounts."
+      },
+      {
+        question: "What does HTTPS help provide?",
+        options: [
+          "Encrypted communication with a website",
+          "Guaranteed virus protection",
+          "Unlimited internet speed",
+          "Automatic account recovery"
+        ],
+        answer: 0,
+        explanation: "HTTPS helps protect data while it travels between your browser and website."
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionBox = document.getElementById("question");
+    const optionsBox = document.getElementById("options");
+    const resultBox = document.getElementById("result");
+    const checkButton = document.getElementById("check");
+    const progressBox = document.getElementById("progress");
+
+    function showQuestion() {
+      answered = false;
+      resultBox.textContent = "";
+      checkButton.disabled = false;
+      checkButton.textContent = "Check Answer";
+
+      const q = questions[current];
+
+      progressBox.textContent =
+        `Question ${current + 1} of ${questions.length}`;
+
+      questionBox.textContent = q.question;
+      optionsBox.replaceChildren();
+
+      q.options.forEach((option, index) => {
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "answer";
+        radio.value = index;
+
+        label.append(radio, document.createTextNode(" " + option));
+        optionsBox.appendChild(label);
+      });
+    }
+
+    checkButton.addEventListener("click", () => {
+      if (answered === "finished") {
+        current = 0;
+        score = 0;
+        showQuestion();
+        return;
+      }
+
+      if (answered === true) {
+        current++;
+
+        if (current < questions.length) {
+          showQuestion();
+        } else {
+          questionBox.textContent = "Quiz Completed!";
+          progressBox.textContent = "Your final result";
+          optionsBox.replaceChildren();
+          resultBox.textContent =
+            `Your score: ${score} / ${questions.length}`;
+          checkButton.textContent = "Restart Quiz";
+          answered = "finished";
+        }
+        return;
+      }
+
+      const selected =
+        document.querySelector('input[name="answer"]:checked');
+
+      if (!selected) {
+        resultBox.textContent = "Please select an answer first.";
+        return;
+      }
+
+      const q = questions[current];
+      const isCorrect = Number(selected.value) === q.answer;
+
+      if (isCorrect) {
+        score++;
+      }
+
+      resultBox.textContent =
+        (isCorrect ? "Correct! " : "Incorrect. ") +
+        "Correct answer: " + q.options[q.answer] +
+        ". Explanation: " + q.explanation;
+
+      answered = true;
+
+      checkButton.textContent =
+        current === questions.length - 1
+          ? "See Final Score"
+          : "Next Question";
+    });
+
+    showQuestion();
+  </script>
+</body>
+</html>
